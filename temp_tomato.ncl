@@ -2,15 +2,26 @@ begin
 dir = "/glade/scratch/chenxing/HW3-ESM237/"
 dir0 = "/glade/u/home/chenxing/HW3-ESM237/"
 
-f1   = addfile(dir + "ACCESS-ESM1-5_tasmax_historical_r1i1p1.nc", "r");
-f2   = addfile(dir + "ACCESS-ESM1-5_tasmin_historical_r1i1p1.nc", "r");
+MODEL = (/"ACCESS-ESM1-5","MPI-ESM1-2-LR" /);"MIROC6",
+EXP = (/"historical","ssp585"/)
+nm = dimsizes(MODEL)
+ne = 5 ;ensemble number
+yrs = (/1850,2015/)
+yrl = (/2014,2099/)
 
-f_yrs = 1850
-f_yrl = 2014
+do iexp = 0,1
+do im = 0,nm-1
+do ie = 1,ne
+
+f1   = addfile(dir + MODEL(im)+"_tasmax_"+EXP(iexp)+"_r"+ie+"i1p1_California.nc", "r");
+f2   = addfile(dir + MODEL(im)+"_tasmin_"+EXP(iexp)+"_r"+ie+"i1p1_California.nc", "r");
+print(MODEL(im)+"_tasmax_"+EXP(iexp)+"_r"+ie+"i1p1_California.nc")
+
+f_yrs = yrs(iexp)
+f_yrl = yrl(iexp)
 nyrs = f_yrl - f_yrs +1 ;number of years
 
   TIME1=f1->time
-  TT2 = cd_calendar(TIME1, 0)
   yyyymmdd =cd_calendar(TIME1, -2)
   printMinMax(yyyymmdd , True)
 
@@ -32,22 +43,21 @@ Tbase = 10 ;base temperature
 Tcutoff = 30 ;cutoff temperature
 
 ;specify planting date
-;March 15
-mos = 3
-dys = 15;(/15,5/)
+;March 15; April 14; May 15
+mos = 4
+dys = 15
 
 ;creat array
 cgdd = tasmax(1:nyrs,:,:)
 cgdd = 0.
 gsl = cgdd ;growing season length
 
-do iyr = 0,nyrs-1;f_yrs,f_yrl
+do iyr = 0,nyrs-2;f_yrs,f_yrl
   ydstrt = (iyr+f_yrs)*10000+mos*100+dys
 
 do ix = 0,dimsizes(tasmax&lat)-1
 do iy = 0,dimsizes(tasmax&lon)-1
   ymstrt1 = ind(yyyymmdd.eq.ydstrt)
-
 do while(cgdd(iyr,ix,iy).lt.MDD)
 
   xmax = tasmax(ymstrt1,ix,iy)
@@ -76,10 +86,14 @@ end do
 printVarSummary(cgdd)
 
 ;-----------output-----------------------------
-fon=dir0+"ACCESS-ESM1-5_historical_gsl.nc";
+fon=dir0+"data/"+MODEL(im)+"_"+EXP(iexp)+"_r"+ie+"i1p1f1_"+mos+"."+dys+"_gsl.nc";
 system("rm -f "+fon)
 fo=addfile(fon,"c")
 fo->gsl  = gsl
 
-
+print(MODEL(im)+" "+EXP(iexp)+" r"+ie+"i1p1f1 is done")
+delete([/yyyymmdd,TIME1,tasmax,tasmin,cgdd,gsl,ydstrt,ymstrt1,xmax,xmin/])
+end do
+end do
+end do
 end

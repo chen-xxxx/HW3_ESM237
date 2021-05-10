@@ -2,7 +2,7 @@ begin
 diri = "/glade/scratch/chenxing/HW3-ESM237/"
 diri2 =  "/glade/scratch/chenxing/HW3-ESM237/"
 
-model = (/"ACCESS-ESM1-5","CESM2","GFDL-ESM4","MIROC6", "MPI-ESM1-2-LR"/)
+model = (/"ACCESS-ESM1-5","MIROC6", "MPI-ESM1-2-LR"/)
 
 nm = dimsizes(model)
 ne = 5; ensemble number
