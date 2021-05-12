@@ -2,7 +2,7 @@ begin
 dir = "/glade/scratch/chenxing/HW3-ESM237/"
 dir0 = "/glade/u/home/chenxing/HW3-ESM237/"
 
-MODEL = (/"ACCESS-ESM1-5","MPI-ESM1-2-LR" /);"MIROC6",
+MODEL = (/"ACCESS-ESM1-5","MIROC6","MPI-ESM1-2-LR" /);
 EXP = (/"historical","ssp585"/)
 nm = dimsizes(MODEL)
 ne = 5 ;ensemble number
